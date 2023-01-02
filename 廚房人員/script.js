@@ -1,5 +1,6 @@
-function getTodoStatus() {
-  fetch('http://127.0.0.1:5500/%E5%82%B3%E9%80%81.htm')
+// 接收服務生系統傳來的資料
+function get() {
+  fetch('URL')
     .then(response => response.json()) // 將回應資料解析成 JSON 格式
     .then(name => addTodo(name)) // 使用解析後的資料來新增餐點
     .catch(error => console.error(error)); // 處理錯誤
@@ -20,11 +21,11 @@ function addTodo(name) {
 
   // 綁定按鈕的點擊事件
   const button = todoItem.querySelector('.todo-button');
-  button.addEventListener('click', toggleTodoStatus);
+  button.addEventListener('click', toggle);
 }
 
 // 監聽按鈕的點擊事件，並更新按鈕的名稱和計時器的狀態
-function toggleTodoStatus(event) {
+function toggle(event) {
   const button = event.target;
   const todoItem = button.parentNode;
   const timer = todoItem.querySelector('.timer');
@@ -42,17 +43,17 @@ function toggleTodoStatus(event) {
 
     // 將完成的餐點名稱傳回給其他網頁
     const name = todoItem.querySelector('span').textContent;
-    sendTodoStatusToOtherWebpage(name);
+    sendToOtherWeb(name);
 
     // 將完成的餐點資訊傳回給後端
     const time = timer.textContent;
-    sendTodoStatusToBackend(name, time);
+    sendToBackend(name, time);
 
     todoItem.remove();
   }
 }
 // 傳送完成的餐點資訊給後端
-function sendTodoStatusToBackend(name, time) {
+function sendToBackend(name, time) {
   const options = {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -66,7 +67,7 @@ function sendTodoStatusToBackend(name, time) {
 
 
 // 傳送完成的餐點資訊給其他網頁
-function sendTodoStatusToOtherWebpage(name) {
+function sendToOtherWeb(name) {
   const message = {
     type: 'todo_status',
     data: name
@@ -77,7 +78,7 @@ function sendTodoStatusToOtherWebpage(name) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(message)
   };
-  fetch('http://127.0.0.1:5500/%E5%82%B3%E9%80%81.htm', options)
+  fetch('URL', options)
     .then(response => response.json())
     .then(data => console.log(data))
     .catch(error => console.error(error));
